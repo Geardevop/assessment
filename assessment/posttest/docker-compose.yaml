@@ -1,0 +1,32 @@
+version: '3'
+
+networks:
+  intregration-test:
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/posttest
+      SPRING_DATASOURCE_USERNAME: user
+      SPRING_DATASOURCE_PASSWORD: password
+    depends_on:
+      - postgres
+    ports:
+      - "8081:8081"
+  postgres:
+    image: postgres:latest
+    environment:
+      POSTGRES_DB: posttest
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+    volumes:
+#      - pgdata:/var/lib/postgresql/data
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+    ports:
+      - "5432:5432"
+
+volumes:
+  pgdata:
